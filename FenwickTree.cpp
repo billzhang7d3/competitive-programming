@@ -38,14 +38,14 @@ public:
         int diff = num - arr[ind];
         while (ind <= n) {
             arr[ind] += diff;
-            ind += intervals[ind];
+            ind += ind & -ind;
         }
     }
     int sum(int ind) {
         int ans = 0;
         while (ind > 0) {
             ans += arr[ind];
-            ind -= ind % -ind;
+            ind -= ind & -ind;
         }
         return ans;
     }
@@ -62,16 +62,27 @@ public:
 int main() {
     ifstream fin("fwt.txt");
     ios_base::sync_with_stdio(false);
-    fin.tie(NULL);
     int n;
     fin >> n;
     int *arr = (int *) malloc(n * sizeof(int));
+    cout << "arr elements:\n";
     for (int i = 0; i < n; ++i) {
         fin >> arr[i];
+        cout << arr[i] << ' ';
     }
+    cout << "\n";
 
     FenwickTree fw(n, arr);
-    for (int i = 1; i <= fw.n; ++i) { cout << fw.arr[i] << endl; }
+    fw.printList();
+    cout << "range query 6, 9: " << fw.rangeSum(6, 9) << endl;
+    cout << "range query 4, 15: " << fw.rangeSum(4, 15) << endl;
+    cout << "range query 1, 4: " << fw.rangeSum(1, 4) << endl;
+    fw.update(7, 1000);
+    fw.printList();
+    cout << "range query 6, 9: " << fw.rangeSum(6, 9) << endl;
+    cout << "range query 4, 15: " << fw.rangeSum(4, 15) << endl;
+
+    free(arr);
 
     return 0;
 }
