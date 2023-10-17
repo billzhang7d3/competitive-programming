@@ -12,24 +12,18 @@ typedef pair <int, int> pii;
 class FenwickTree {
 public:
     int n;
-    vi arr, intervals;
+    vi arr;
     FenwickTree(int n, int *arr) {
         this->n = n;
         this->arr.pb(0);
         for (int i = 0; i < n; ++i) { this->arr.pb(arr[i]); }
-        intervals.resize(n + 1);
-        for (int interval = 1; interval <= n; interval *= 2) {
-            for (int i = interval; i <= n; i += interval * 2) {
-                intervals[i] = interval;
-            }
-        }
         for (int interval = 1; interval <= n; interval *= 2) {
             for (int i = interval; i <= n; i += interval * 2) {
                 int reference = arr[i - 1], ind = i;
-                ind += intervals[ind];
+                ind += ind & -ind;
                 while (ind <= n) {
                     this->arr[ind] += reference;
-                    ind += intervals[ind];
+                    ind += ind & -ind;
                 }
             }
         }
