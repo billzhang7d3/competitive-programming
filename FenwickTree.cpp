@@ -1,54 +1,78 @@
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
+using namespace std;
 #define pb push_back
 #define mp make_pair
-using namespace std;
+#define PI 3.1415926535897932384626
+#define fr first
+#define sc second
 typedef long long ll;
+typedef vector <int> vi;
 typedef pair <int, int> pii;
 
-int n, m;
-// first stores the node value
-// second stores the distance
-vector <vector <pii>> adjList;
-
-int main() {
-    ios_base::sync_with_stdio(0);
-    cin >> n >> m;
-    adjList.resize(n);
-    for (int i = 0; i < m; ++i) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        //--a;
-        //--b;
-        adjList[a].pb(mp(b, c));
-        adjList[b].pb(mp(a, c));
-    }
-
-    int dis[n];
-    for (int i = 1; i < n; ++i)
-        dis[i] = INT32_MAX;
-    dis[0] = 0;
-    // first is to store total distance approaching
-    // second is to store the destined node
-    priority_queue <pii, vector <pii>, greater <pii>> pq;
-    pq.push(mp(0, 0));
-    while (!pq.empty()) {
-        pii cur = pq.top();
-        pq.pop();
-        for (pii p : adjList[cur.second]) {
-            if (cur.first + p.second < dis[p.first]) {
-                pq.push(mp(p.second + cur.first, p.first));
-                dis[p.first] = p.second + cur.first;
+class FenwickTree {
+public:
+    int n;
+    vi arr, intervals;
+    FenwickTree(int n, int *arr) {
+        this->n = n;
+        this->arr.pb(0);
+        for (int i = 0; i < n; ++i) { this->arr.pb(arr[i]); }
+        intervals.resize(n + 1);
+        for (int interval = 1; interval <= n; interval *= 2) {
+            for (int i = interval; i <= n; i += interval * 2) {
+                intervals[i] = interval;
+            }
+        }
+        for (int interval = 1; interval <= n; interval *= 2) {
+            for (int i = interval; i <= n; i += interval * 2) {
+                int reference = arr[i - 1], ind = i;
+                ind += intervals[ind];
+                while (ind <= n) {
+                    this->arr[ind] += reference;
+                    ind += intervals[ind];
+                }
             }
         }
     }
-
-    for (int i = 0; i < n; ++i) {
-        cout << "Distance from " << 1 << " to " << i + 1 << " is " << dis[i] << endl;
+    void update(int ind, int num) {
+        int diff = num - arr[ind];
+        while (ind <= n) {
+            arr[ind] += diff;
+            ind += intervals[ind];
+        }
     }
+    int sum(int ind) {
+        int ans = 0;
+        while (ind > 0) {
+            ans += arr[ind];
+            ind -= ind % -ind;
+        }
+        return ans;
+    }
+    int rangeSum(int st, int en) {
+        //inclusive
+        return sum(en) - sum(st - 1);
+    }
+    void printList() {
+        for (int i = 1; i <= n; ++i) { cout << arr[i] << ' '; }
+        cout << endl;
+    }
+};
+
+int main() {
+    ifstream fin("fwt.txt");
+    ios_base::sync_with_stdio(false);
+    fin.tie(NULL);
+    int n;
+    fin >> n;
+    int *arr = (int *) malloc(n * sizeof(int));
+    for (int i = 0; i < n; ++i) {
+        fin >> arr[i];
+    }
+
+    FenwickTree fw(n, arr);
+    for (int i = 1; i <= fw.n; ++i) { cout << fw.arr[i] << endl; }
 
     return 0;
 }
+
