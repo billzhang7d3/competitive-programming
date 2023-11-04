@@ -59,9 +59,6 @@ int rangeSum(SegTree st, int start, int end) {
 
 void update(SegTree st, int index, int value) {
     if (st->start <= index && st->end >= index) {
-        /*printf("value: %d\n", value);
-        printf("index: %d\n", index);
-        printf("diff: %d\n", st->arr[index - st->start]);*/
         st->sum += value - st->arr[index - st->start];
         st->arr[index - st->start] = value;
         if (st->left) { update(st->left, index, value); }
