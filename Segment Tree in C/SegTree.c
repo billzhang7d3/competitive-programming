@@ -12,7 +12,6 @@ typedef STO* SegTree;
 
 //each ST will need it's own unique arr, this can probably be optimized
 SegTree createST(int start, int end, int *arr) {
-    //printf("start: %d, end: %d\n", start, end);
     SegTree st = (SegTree) malloc(sizeof(STO));
     st->sum = 0;
     st->start = start;
