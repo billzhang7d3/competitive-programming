@@ -39,7 +39,9 @@ void merge(Node srcNode, Node destNode) {
 }
 
 bool contains(Node node, int value) {
-    while (node->parent) {
+    while (node) {
+        if (value == node->value) { return 1; }
         node = node->parent;
     }
+    return 0;
 }
